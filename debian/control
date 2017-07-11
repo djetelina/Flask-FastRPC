@@ -1,0 +1,11 @@
+Source: python3-flask-fastrpc
+Section: module
+Priority: optional
+Maintainer: David Jetelina <david.jetelina@firma.seznam.cz>
+Build-Depends: debhelper, dh-python, python3-all, python3-setuptools
+X-Python3-Version: >= 3.4
+
+Package: python3-flask-fastrpc
+Architecture: all
+Depends: python3-flask, python3-typing
+Description: Flask extension that allows it to be used as a fastrpc/xmlrpc server.

@@ -1,0 +1,5 @@
+python3-flask-fastrpc (1.0.0) testing; urgency=medium
+
+  * Initial release
+
+ -- David Jetelina <david.jetelina@firma.seznam.cz>  Tue, 11 Jul 2017 13:12:00 +0200
