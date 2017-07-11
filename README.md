@@ -6,7 +6,7 @@ Requires Python 3.4+
 
 ## Install
 
-`pip install flask_fastrpc`
+`pip3 install flask-fastrpc`
 
 ## Use
 
