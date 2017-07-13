@@ -53,6 +53,8 @@ class FastRPCHandler:
             self.register_method('system.listMethods', self._system_list_methods)
             self.register_method('system.methodHelp', self._system_method_help)
 
+        self.register_method('server.stat', self.stat)
+
         self.app.add_url_rule(rule=url, endpoint='RPC', view_func=self.handle, methods=['POST'])
 
     def register_method(self, method_name: str, func: Callable):
@@ -149,6 +151,10 @@ class FastRPCHandler:
             return doc if doc else ''
         except KeyError:
             raise Exception("Method '%s' doesn't exist" % method_name)
+
+    def stat(self):
+        """Basic method returning status 200"""
+        return {}
 
 
 def _response_autostatus(response: Any) -> None:
