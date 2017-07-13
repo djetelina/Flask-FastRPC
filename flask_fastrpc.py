@@ -8,6 +8,7 @@ If no fastrpc is found, xmlrpc will be used instead - for environments where fas
 Based on fastrpc aiohttp handler by Dan Milde, which was based on fastrpc Tornado handler by Jan Seifert :).
 """
 import inspect
+from typing import Any, Callable, List, Set, Optional, Dict, Union
 try:
     import fastrpc
 except ImportError:
@@ -15,7 +16,7 @@ except ImportError:
     from xmlrpc import client as xmlrpc
 import logging
 from flask import Response, request, Flask
-from typing import Any, Callable, List, Set, Optional, Dict, Union
+from typeguard import typechecked
 
 try:
     from flask import _app_ctx_stack as stack  # flask 0.9+
@@ -30,17 +31,19 @@ class FastRPCHandler:
     """The handler."""
 
     def __init__(self, app: Flask=None, register_introspection_methods: bool=True,
-                 allowed_content_types: Optional[List]=None, url: str='/RPC2') -> None:
+                 allowed_content_types: Optional[List]=None, url: str='/RPC2', enforce_types: bool=True) -> None:
         """
         :param app:                                 Flask application to be registered
         :param register_introspection_methods:      If the server should have system.listMethods and system.methodHelp
         :param allowed_content_types:               By default accepts application/x-frpc and test/xml
         :param url:                                 URL to be registered, /RPC2 by default
+        :param enforce_types:                       Whether type annotations of your methods should be enforced on runtime
         """
         if not fastrpc:
             logging.warning('No fastrpc module found, using xmlrpc instead')
         self.app = app
         self.methods = {}  # type: Dict[str, Callable]
+        self.enforce_types = enforce_types
 
         if allowed_content_types:
             self.allowed_content_types = set(allowed_content_types)
@@ -64,7 +67,10 @@ class FastRPCHandler:
         :param method_name:     Name of the method - how it will be called from the outside
         :param func:            The function that will handle that call
         """
-        self.methods[method_name] = func
+        if self.enforce_types:
+            self.methods[method_name] = typechecked(func)
+        else:
+            self.methods[method_name] = func
 
     def handle(self) -> Union[Response, tuple]:
         """
@@ -85,7 +91,7 @@ class FastRPCHandler:
         else:
             args, method_name = xmlrpc.loads(request.data)
 
-        logging.debug('Calling method %s with args: %s', method_name, args)
+        logging.info('Calling method %s with args: %s', method_name, args)
 
         return self._create_response(method_name, args, accept_cts)
 
@@ -114,7 +120,7 @@ class FastRPCHandler:
                     'statusMessage': str(ex)
                 }
 
-        logging.debug('Response: %s', response)
+        logging.info('Response: %s', response)
 
         _response_autostatus(response)
 

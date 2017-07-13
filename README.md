@@ -59,4 +59,5 @@ or alternatively using builtin xmlrpc client
 ## Features
 
 * When fastrpc fails to import, xmlrpc is used
+* Enforcing type check from annotations during runtime (can be turned off)
 * When returning a dictionary, automatically adds keys `{status: 200, statusMessage: 'ok'}` to it (when not present)

@@ -11,7 +11,7 @@ from setuptools import setup
 if sys.version_info.major < 3:
     sys.exit('Python 2 is not supported')
 
-requirements = ['Flask']
+requirements = ['Flask', 'typeguard']
 if sys.version_info.minor < 5:
     requirements.append('typing>=3.5.2.2')
 
