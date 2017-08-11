@@ -15,6 +15,7 @@ except ImportError:
     fastrpc = None
     from xmlrpc import client as xmlrpc
 import logging
+from traceback import format_exc
 from flask import Response, request, Flask
 from typeguard import typechecked
 
@@ -114,7 +115,9 @@ class FastRPCHandler:
                 method = self.methods[method_name]
                 response = method(*args)
             except Exception as ex:
-                logging.exception('In method call')
+                # .error() instead of .exception(), because that way it doesn't break log parsing when someone
+                # is using that, because it inserts the exception into the message itself, instead of paste after
+                logging.error('In method call %s: \n%s', method_name, format_exc())
                 response = {
                     'status': 500,
                     'statusMessage': str(ex)
@@ -133,6 +136,7 @@ class FastRPCHandler:
             headers['Content-Type'] = RPC_CONTENT_TYPE
 
         if fastrpc:
+            headers['Accept'] = ','.join(self.allowed_content_types)
             body = fastrpc.dumps((response,), methodresponse=True, useBinary=use_binary)
         else:
             body = xmlrpc.dumps((response,), methodresponse=True)
