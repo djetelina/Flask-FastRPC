@@ -17,7 +17,7 @@ if sys.version_info.minor < 5:
 
 setup(
     name='Flask-FastRPC',
-    version='1.0',
+    version='1.1',
     url='https://github.com/seznam',
     license='BSD',
     author='David Jetelina',
