@@ -1,3 +1,9 @@
+python3-flask-fastrpc (1.0.4) testing; urgency=medium
+
+  * Oprava accept headeru 
+
+ -- David <david.jetelina@firma.seznam.cz>  Wed, 16 Aug 2017 10:39:53 +0200
+
 python3-flask-fastrpc (1.0.3) testing; urgency=medium
 
   * Typeguard added
