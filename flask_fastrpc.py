@@ -14,6 +14,10 @@ try:
 except ImportError:
     fastrpc = None
     from xmlrpc import client as xmlrpc
+try:
+    import uwsgi
+except ImportError:
+    uwsgi = None
 import logging
 from traceback import format_exc
 from flask import Response, request, Flask
@@ -51,7 +55,7 @@ class FastRPCHandler:
         else:
             self.allowed_content_types = {RPC_CONTENT_TYPE}
             if fastrpc:
-                self.allowed_content_types.add(FRPC_CONTENT_TYPE)
+                self.allowed_content_types = {FRPC_CONTENT_TYPE, RPC_CONTENT_TYPE}
 
         if register_introspection_methods:
             self.register_method('system.listMethods', self._system_list_methods)
@@ -88,7 +92,20 @@ class FastRPCHandler:
             return 'Content-Type not supported', 400
 
         if fastrpc:
-            args, method_name = fastrpc.loads(request.data)
+            if FRPC_CONTENT_TYPE == request.headers['Content-Type']:
+                # We will be loading binary data, which is sent through chunked transfer encoding - not very friendly.
+                # Werkzeug doesn't recognize the header, so the data should be in request.stream BUT
+                # since chunked transfer encoding isn't sending Content-Length header, as it does not make sense,
+                # werkzeug needs some kind of middleware that handles it. In ideal world, we could use stream
+                # because the middleware would set request.environ['wsgi.input_terminated'] - I found none that do that
+                # which means for now we'll be supporting just uwsgi until I figure out how to do with with the others
+                # like gunicorn etc. big TODO !
+                if uwsgi is None:
+                    raise NotImplementedError("This application needs to be running on uWSGI, I'm sorry! TODO :) ")
+                request_data = uwsgi.chunked_read()
+            else:
+                request_data = request.data
+            args, method_name = fastrpc.loads(request_data)
         else:
             args, method_name = xmlrpc.loads(request.data)
 

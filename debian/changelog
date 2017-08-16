@@ -1,3 +1,16 @@
+python3-flask-fastrpc (1.3.0) testing; urgency=medium
+
+  * Opraveny obri bug kdy flask-fastrpc nebyl schopny zvladnout binarni
+    pozadavek
+
+ -- David <david.jetelina@firma.seznam.cz>  Wed, 16 Aug 2017 19:30:50 +0200
+
+python3-flask-fastrpc (1.0.5) testing; urgency=medium
+
+  * Logovani Parser erroru pri fastrpc.loads 
+
+ -- David <david@david-Latitude-E7470>  Wed, 16 Aug 2017 14:40:55 +0200
+
 python3-flask-fastrpc (1.0.4) testing; urgency=medium
 
   * Oprava accept headeru 
