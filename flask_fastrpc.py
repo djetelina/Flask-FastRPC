@@ -8,7 +8,10 @@ If no fastrpc is found, xmlrpc will be used instead - for environments where fas
 Based on fastrpc aiohttp handler by Dan Milde, which was based on fastrpc Tornado handler by Jan Seifert :).
 """
 import inspect
+import logging
+from traceback import format_exc
 from typing import Any, Callable, List, Set, Optional, Dict, Union
+
 try:
     import fastrpc
 except ImportError:
@@ -18,8 +21,7 @@ try:
     import uwsgi
 except ImportError:
     uwsgi = None
-import logging
-from traceback import format_exc
+
 from flask import Response, request, Flask
 from typeguard import typechecked
 
@@ -114,7 +116,11 @@ class FastRPCHandler:
         return self._create_response(method_name, args, accept_cts)
 
     def _get_accepted_content_types(self) -> Set[str]:
-        accept_cts = [content_type.strip() for content_type in request.headers.get('Accept', '').split(',')]
+        accept_cts = [
+            content_type.strip()
+            for content_type in request.headers.get('Accept', '').split(',')
+            if content_type
+        ]
         if not accept_cts:
             accept_cts = [request.headers['Content-Type']]
         return set(accept_cts)

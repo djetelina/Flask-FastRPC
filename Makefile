@@ -7,6 +7,7 @@ source:
 	python3 setup.py sdist
 
 upload:
+	rm dist/*
 	python3 setup.py sdist
 	python3 setup.py bdist_wheel
 	python3 setup.py bdist
@@ -26,3 +27,7 @@ builddeb:
 	rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 	# build the package
 	dpkg-buildpackage -uc -us -i -I -rfakeroot
+
+lint:
+	python3 -m mypy flask_fastrpc.py --ignore-missing-imports
+	python3 -m flake8 flask_fastrpc.py --ignore E501,F401
