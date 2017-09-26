@@ -10,7 +10,6 @@ upload:
 	rm dist/*
 	python3 setup.py sdist
 	python3 setup.py bdist_wheel
-	python3 setup.py bdist
 	twine upload dist/*
 	python3 setup.py clean
 
