@@ -25,11 +25,6 @@ except ImportError:
 from flask import Response, request, Flask
 from typeguard import typechecked
 
-try:
-    from flask import _app_ctx_stack as stack  # flask 0.9+
-except ImportError:
-    from flask import _request_ctx_stack as stack
-
 FRPC_CONTENT_TYPE = 'application/x-frpc'
 RPC_CONTENT_TYPE = 'text/xml'
 
@@ -115,7 +110,8 @@ class FastRPCHandler:
 
         return self._create_response(method_name, args, accept_cts)
 
-    def _get_accepted_content_types(self) -> Set[str]:
+    @staticmethod
+    def _get_accepted_content_types() -> Set[str]:
         accept_cts = [
             content_type.strip()
             for content_type in request.headers.get('Accept', '').split(',')
@@ -126,8 +122,6 @@ class FastRPCHandler:
         return set(accept_cts)
 
     def _create_response(self, method_name: str, args: Any, accept_cts: Set[str]) -> Response:
-        response = None
-
         if method_name not in self.methods:
             response = {
                 'status': 501,
@@ -185,7 +179,8 @@ class FastRPCHandler:
         except KeyError:
             raise Exception("Method '%s' doesn't exist" % method_name)
 
-    def stat(self):
+    @staticmethod
+    def stat():
         """Basic method returning status 200"""
         return {}
 
