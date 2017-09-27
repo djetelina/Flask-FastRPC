@@ -17,7 +17,7 @@ if sys.version_info.minor < 5:
 
 setup(
     name='Flask-FastRPC',
-    version='1.4',
+    version='1.5',
     url='https://github.com/iScrE4m/Flask-FastRPC',
     license='BSD',
     author='David Jetelina',
