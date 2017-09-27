@@ -166,7 +166,7 @@ class FastRPCHandler:
         """
         Return list of all available FastRPC methods.
         """
-        return list(self.methods.keys())
+        return sorted(list(self.methods.keys()))
 
     def _system_method_help(self, method_name: str) -> str:
         """
@@ -174,10 +174,11 @@ class FastRPCHandler:
         """
         try:
             func = self.methods[method_name]
-            doc = inspect.getdoc(func)
-            return doc if doc else ''
         except KeyError:
             raise Exception("Method '%s' doesn't exist" % method_name)
+        signature = method_name + str(inspect.signature(func))
+        doc = inspect.getdoc(func) or ''
+        return "{}\n\n{}".format(signature, doc)
 
     @staticmethod
     def stat():
