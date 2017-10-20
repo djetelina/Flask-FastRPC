@@ -142,6 +142,7 @@ class FastRPCHandler:
 
         logging.info('Response: %s', response)
 
+        response = response if response is not None else {}
         _response_autostatus(response)
 
         headers = {}
